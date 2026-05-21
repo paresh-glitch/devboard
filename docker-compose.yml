@@ -1,0 +1,39 @@
+services:
+  mongodb:
+    image: mongo:6
+    container_name: db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongosdb:/data/db
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    
+  backend:
+    build: ./backend
+    container_name: devboard-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongosdb:
+
