@@ -104,3 +104,10 @@ jobs:
             --cluster devboard-cluster \
             --service devboard-backend-service \
             --force-new-deployment
+
+      - name: deploy to ecs
+        run: |
+          aws ecs update-service \
+            --cluster devboard-cluster \
+            --service devboard-frontend-service \
+            --force-new-deployment
